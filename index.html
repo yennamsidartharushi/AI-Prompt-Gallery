@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AI Prompt Gallery</title>
+
+<style>
+:root{
+  --bg:#050507;
+  --card:#0e0e14;
+  --border:#1f1f2a;
+  --text:#f5f5f7;
+  --muted:#9ca3af;
+  --accent:#7c5cff;
+}
+
+*{box-sizing:border-box;font-family:Inter,system-ui,sans-serif}
+
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+}
+
+header{
+  padding:20px 28px;
+  border-bottom:1px solid var(--border);
+  font-size:22px;
+  font-weight:600;
+}
+
+.container{
+  max-width:1400px;
+  margin:30px auto;
+  padding:0 20px;
+}
+
+.search-box input{
+  width:100%;
+  padding:16px;
+  background:#000;
+  border:1px solid var(--border);
+  border-radius:16px;
+  color:var(--text);
+}
+
+/* ✅ ONLY CHANGE IS HERE */
+.grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:24px;
+}
+
+.card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:18px;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+}
+
+.thumb{
+  position:relative;
+  height:340px;
+  background:#000;
+  cursor:pointer;
+}
+
+.thumb img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+}
+
+.badge,.like{
+  position:absolute;
+  background:#000c;
+  padding:6px 10px;
+  border-radius:20px;
+  font-size:12px;
+}
+
+.badge{top:12px;left:12px}
+
+.like{
+  bottom:12px;
+  right:12px;
+  cursor:pointer;
+  transition:.2s;
+}
+
+.like.active{
+  transform:scale(1.3);
+  color:#ff5c8a;
+}
+
+.body{
+  padding:16px;
+  display:flex;
+  flex-direction:column;
+  flex-grow:1;
+}
+
+.body p{
+  font-size:14px;
+  color:var(--muted);
+  line-height:1.5;
+  max-height:90px;
+  overflow-y:auto;
+}
+
+.actions{
+  display:flex;
+  gap:10px;
+  margin-top:auto;
+}
+
+.copy-btn{
+  flex:1;
+  padding:12px;
+  background:var(--accent);
+  border:none;
+  border-radius:14px;
+  color:#fff;
+  cursor:pointer;
+}
+
+.icon{
+  width:36px;
+  height:36px;
+  border:1px solid var(--border);
+  border-radius:12px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+}
+
+/* FULLSCREEN VIEWER */
+.viewer{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.9);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:1000;
+}
+.viewer.active{display:flex}
+
+.viewer-box{
+  background:#0b0b12;
+  border-radius:20px;
+  width:90%;
+  max-width:900px;
+  max-height:90vh;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+}
+
+.viewer-box img{
+  width:100%;
+  max-height:50vh;
+  object-fit:contain;
+  background:#000;
+}
+
+.viewer-content{
+  padding:20px;
+  overflow-y:auto;
+}
+
+.viewer-content p{
+  line-height:1.6;
+  color:#e5e5e5;
+  white-space:pre-wrap;
+}
+
+.viewer-actions{
+  display:flex;
+  gap:12px;
+  margin-top:16px;
+}
+
+.viewer-actions button{
+  padding:10px 16px;
+  border:none;
+  border-radius:12px;
+  background:var(--accent);
+  color:#fff;
+  cursor:pointer;
+}
+
+.viewer-actions a{
+  color:var(--accent);
+  text-decoration:none;
+}
+
+.viewer-close{
+  position:absolute;
+  top:20px;
+  right:24px;
+  font-size:26px;
+  cursor:pointer;
+}
+
+footer{
+  text-align:center;
+  padding:30px;
+  color:var(--muted);
+}
+.profile-footer{
+  display:flex;
+  align-items:center;
+  gap:16px;
+  max-width:600px;
+  margin:40px auto 20px;
+  padding:16px 20px;
+  background:#0e0e14;
+  border:1px solid #1f1f2a;
+  border-radius:20px;
+}
+
+.profile-footer img{
+  width:70px;
+  height:70px;
+  border-radius:50%;
+  object-fit:cover;
+  border:2px solid #7c5cff;
+}
+
+.profile-text h3{
+  margin:0;
+  font-size:18px;
+}
+
+.profile-text p{
+  margin:4px 0;
+  color:#9ca3af;
+  font-size:14px;
+}
+
+.profile-text a{
+  color:#7c5cff;
+  text-decoration:none;
+  font-size:14px;
+}
+
+</style>
+</head>
+
+<body>
+<header>AI Prompt Gallery</header>
+
+<div class="container">
+
+  <div class="search-box">
+    <input placeholder="Search prompts..." onkeyup="filterCards(this.value)">
+  </div>
+
+  <div class="grid">
+
+   <!-- CARD 4 -->
+<div class="card">
+  <div class="thumb" onclick="openViewer(this)">
+    <img src="hyderabad city images .png">
+    <div class="badge">Gemini 3</div>
+    <div class="like" onclick="event.stopPropagation();like(this)">❤ <span>12</span></div>
+  </div>
+  <div class="body">
+    <p>Create a hyperrealistic surreal spherical panorama of a charming [City], with a famous landmarks seamlessly curving around the top of the planet-like. surface. The scene should include a sleek white 3D text [city]' seamlessly integrated into the urban landscape. The scene is viewed from a top-down, orbiting angle that emphasizes the planet effect. Soft, natural daylight filters through a partly cloudy sky, casting gentle shadows on the lush green grass and surrounding trees. The background blends smoothly into a dramatic swirling sky. Use a natural yet vivid color palette with crisp greens, soft blues, and muted earth tones. Render the entire composition in a polished photorealistic style with fine architectural and environmental detail.</p>
+    <div class="actions">
+      <button class="copy-btn" onclick="copyText(this)">📋 Copy</button>
+      <div class="icon" onclick="openViewer(this)">🔍</div>
+    </div>
+  </div>
+</div>
+
+<!-- CARD 5 -->
+<div class="card">
+  <div class="thumb" onclick="openViewer(this)">
+    <img src="605870678_18135312154486055_976335010352677258_n.webp">
+    <div class="badge">Gemini 3</div>
+    <div class="like" onclick="event.stopPropagation();like(this)">❤ <span>6</span></div>
+  </div>
+  <div class="body">
+    <p>Create a cinematic digital illustration of the person in the reference phoic Maintain the exact face identity hairstyle, expression skin tone and pose with zero distortion Transform the entire scene into a deep red high contrast. Replace the background with red gradients smoky atmosphere and subt.e textures. Add bold comic book shading thick outlines, strong black shadowS and glossy highlights on the skin and clothes. Stylize the outfit with richer tones clean folds and dynamic lighting while keeping the original clothing design Add intense highlights to the jawline cheekbones and edges of the body Maintain the original pose and attitude Create a gritty powerful cinematic mood with dramatic lighting and high contrast Ultra-detailed sharp lines vibrant red atmosphere action movie poster energy, 4K illustration</p>
+    <div class="actions">
+      <button class="copy-btn" onclick="copyText(this)">📋 Copy</button>
+      <div class="icon" onclick="openViewer(this)">🔍</div>
+    </div>
+  </div>
+</div>
+
+<!-- CARD 6 -->
+<div class="card">
+  <div class="thumb" onclick="openViewer(this)">
+    <img src="gt650manprompt.webp">
+    <div class="badge">Gemini 3</div>
+    <div class="like" onclick="event.stopPropagation();like(this)">❤ <span>9</span></div>
+  </div>
+  <div class="body">
+    <p>Give the same exact face 8k ultra image. Promptl He leans casually against a stell continental gt 650 chrome in an outdoorurban setting, wide tires perfectly customized body with a dark gray wall with natural plant environment and patches of foliage in the background. Natural yet muted lighting creates a subdued atmosphere where dark neutral tones contrast with the vivid white of his sneakers, the scene captures an edgy, cinematic sense of nonchalance and introspection. Short line High detauled, professional photography with 8k. Wear a professional black suit shirt and white pant.with cute smile</p>
+    <div class="actions">
+      <button class="copy-btn" onclick="copyText(this)">📋 Copy</button>
+      <div class="icon" onclick="openViewer(this)">🔍</div>
+    </div>
+  </div>
+</div>
+
+<!-- CARD 7 -->
+<div class="card">
+  <div class="thumb" onclick="openViewer(this)">
+    <img src="lambo car.jpg">
+    <div class="badge">Gemini 3</div>
+    <div class="like" onclick="event.stopPropagation();like(this)">❤ <span>4</span></div>
+  </div>
+  <div class="body">
+    <p>A full-body portrait of a confident man leaning casually against a matte black Lamborghini Huracán Performante. He is wearing rich dark sunglasses, with a relaxed smile on his face. His hands are resting loosely, and one foot is slightly crossed over the other.
+
+He is dressed in a black zip-up athletic jacket layered over a neon yellow performance inner shirt, paired with black fitted trousers and black sneakers with neon yellow accents. His skin tone is warm medium brown, and he has a short, neat haircut.
+
+The background is a dark grey studio with a subtle neon yellow tube light on the wall that matches the car and outfit accents. The floor is slightly reflective. Lighting is dramatic studio lighting with highlights on the matte black car surface.
+ 
+Mood: power, exclusivity, bold elegance, modern sports luxury. </p>
+    <div class="actions">
+      <button class="copy-btn" onclick="copyText(this)">📋 Copy</button>
+      <div class="icon" onclick="openViewer(this)">🔍</div>
+    </div>
+  </div>
+</div>
+
+<!-- CARD 8 -->
+<div class="card">
+  <div class="thumb" onclick="openViewer(this)">
+    <img src="sidhu.jpg">
+    <div class="badge">Gemini 3</div>
+    <div class="like" onclick="event.stopPropagation();like(this)">❤ <span>7</span></div>
+  </div>
+  <div class="body">
+    <p>Ultra-high-resolution cinematic fantasy shot inspired by the world of Pandora (Avatar),
+
+a GIGANTIC, powertul Toruk with massive wingspan, clearly larger than the rider, movie-accurate scale, tlying at extreme altitude above Pandora,
+
+FULL CREATURE fully visible in the frame from head to tail, wide-angle aerial perspective emphasizing size, height and dominance.
+
+NEW BACKGROUND POSITION:
+
+Floating mountains positioned FAR IN THE DISTANCE on the
+
+LOWER LEFT,
+
+volcanic regions and glowing lava fields spread across the
+
+LOWER CENTER, thick dramatic clouds and vast open sky filling the TOP and RIGHT,
+
+strong depth layering to enhance epic scale and realism, Toruk dominating the center of the composition.
+
+NEW POSE:
+
+Place ME riding the Toruk in a STRONG FORWARD-
+
+EXTENDED
+
+COMMAND POSE,
+
+upper body leaned slightly forward with authority, one nana gripping the reins nrmly
+
+he other hand stretched slightly forward as if guiding th
+
+Toruk,
+
+legs firmly locked and balanced on the Toruk's back, confident, (image should be in 3:4)</p>
+    <div class="actions">
+      <button class="copy-btn" onclick="copyText(this)">📋 Copy</button>
+      <div class="icon" onclick="openViewer(this)">🔍</div>
+    </div>
+  </div>
+</div>
+
+<!-- CARD 9 -->
+<div class="card">
+  <div class="thumb" onclick="openViewer(this)">
+    <img src="602851006_17857764480575579_8881305543807802468_n.webp">
+    <div class="badge">Gemini 3</div>
+    <div class="like" onclick="event.stopPropagation();like(this)">❤ <span>10</span></div>
+  </div>
+  <div class="body">
+    <p>Create an ultra-realistic DSLR-style photo using the uploaded reference Image as the main character.
+
+FACE & IDENTITY:
+
+Face must romain 100% IDENTICAL to the uploaded image
+
+Same hairstyle, beard shape, skin tone
+
+No face change, no beautification
+
+OUTFIT DETAILS:
+
+Maroon oversized t-shirt
+
+loose Blue straight-jeans
+
+Clean white sneakers
+
+Black Apple smart watch
+
+Black Premium luxury sunglasses
+
+No extra accessories, minimal street style
+
+POSE DETAILS (VERY IMPORTANT):
+
+Same confident pose as reference
+
+Sitting on a red naked sports bike
+
+One leg on ground, one leg relaxed
+
+Hands resting casually on bike handle / fuel tank
+
+Relaxed masculine body language
+
+Looking straight at camera with calm confident expression
+
+BIKE DETAILS:
+
+Red and black naked sports bike
+
+Muscular body, exposed engine
+
+Wide front tyre
+
+Street bike aesthetic (Duke-style look)
+
+BACKGROUND & ENVIRONMENT:
+
+Urban street road
+
+Soft blurred buildings and trees
+
+Neutral city background
+
+Minim</p>
+    <div class="actions">
+      <button class="copy-btn" onclick="copyText(this)">📋 Copy</button>
+      <div class="icon" onclick="openViewer(this)">🔍</div>
+    </div>
+  </div>
+</div>
+
+<!-- CARD 10 -->
+<div class="card">
+  <div class="thumb" onclick="openViewer(this)">
+    <img src="612467217_18053218397687918_8876993446323509717_n.webp">
+    <div class="badge">Gemini 3</div>
+    <div class="like" onclick="event.stopPropagation();like(this)">❤ <span>5</span></div>
+  </div>
+  <div class="body">
+    <p>Create a vintage 1970s
+
+Bollywood-inspired photograph of a stylish man sitting casually on the hood of a classic car. He is dressed in a cream pinstriped blazer, cream bell-bottom trousers, and a dark brown shirt with the top buttons open, paired with brown formal shoes, giving a confident mafia-style look. The car has wide whitewall tires, chrome details, and a polished metallic body, reflecting sunlight. In the background, tall green trees and hedges frame the scene. The photograph has the warm, grainy tones of a retro cinematic camera.</p>
+    <div class="actions">
+      <button class="copy-btn" onclick="copyText(this)">📋 Copy</button>
+      <div class="icon" onclick="openViewer(this)">🔍</div>
+    </div>
+  </div>
+</div>
+
+<!-- CARD 11 -->
+<div class="card">
+  <div class="thumb" onclick="openViewer(this)">
+    <img src="590">
+    <div class="badge">Gemini 3</div>
+    <div class="like" onclick="event.stopPropagation();like(this)">❤ <span>8</span></div>
+  </div>
+  <div class="body">
+    <p>Floating Telugu album covers arranged in a circular orbit with realistic lighting, depth blur, and holographic reflections.</p>
+    <div class="actions">
+      <button class="copy-btn" onclick="copyText(this)">📋 Copy</button>
+      <div class="icon" onclick="openViewer(this)">🔍</div>
+    </div>
+  </div>
+</div>
+
+  </div>
+</div>
+
+<footer>© 2026 AI Prompt Gallery</footer>
+
+<div class="viewer" id="viewer" onclick="closeViewer()">
+  <div class="viewer-close">✕</div>
+  <div class="viewer-box" onclick="event.stopPropagation()">
+    <img id="viewerImg">
+    <div class="viewer-content">
+      <p id="viewerText"></p>
+      <div class="viewer-actions">
+        <button onclick="copyViewer()">📋 Copy Prompt</button>
+        <a href="https://instagram.com/y._siddartha_" target="_blank">
+          📸 Instagram @y._siddartha_
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function filterCards(val){
+  val = val.toLowerCase();
+  document.querySelectorAll('.card').forEach(c=>{
+    c.style.display = c.innerText.toLowerCase().includes(val) ? 'block':'none';
+  })
+}
+
+/* 🔥 FIXED COPY FUNCTION */
+function copyText(btn){
+  const text = btn.closest('.card').querySelector('p').innerText;
+
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(text).then(()=>{
+      btn.innerText = "✓ Copied";
+      setTimeout(()=>btn.innerText="📋 Copy",1500);
+    });
+  } else {
+    const textarea = document.createElement("textarea");
+    textarea.value = text;
+    textarea.style.position = "fixed";
+    textarea.style.left = "-9999px";
+    document.body.appendChild(textarea);
+    textarea.select();
+    document.execCommand("copy");
+    document.body.removeChild(textarea);
+
+    btn.innerText = "✓ Copied";
+    setTimeout(()=>btn.innerText="📋 Copy",1500);
+  }
+}
+
+function like(el){
+  const span = el.querySelector('span');
+  span.innerText = Number(span.innerText)+1;
+  el.classList.add('active');
+  setTimeout(()=>el.classList.remove('active'),300);
+}
+
+function openViewer(el){
+  const card = el.closest('.card');
+  viewerImg.src = card.querySelector('img').src;
+  viewerText.innerText = card.querySelector('p').innerText;
+  viewer.classList.add('active');
+}
+
+function closeViewer(){
+  viewer.classList.remove('active');
+}
+
+function copyViewer(){
+  navigator.clipboard.writeText(viewerText.innerText);
+  alert("Prompt copied!");
+}
+</script>
+
+<div class="profile-footer">
+  <img src="sidhutheower.webp" alt="Sidhu">
+  <div class="profile-text">
+    <h3>yennamsiddartharushi</h3>
+    <p>AI Prompt Creator • UI Designer • Student</p>
+    <a href="https://instagram.com/y._siddartha_" target="_blank">📸 @y._siddartha_</a>
+  </div>
+</div>
+
+</body>
+</html>
